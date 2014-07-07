@@ -7,6 +7,14 @@ module.exports = (grunt) ->
     gruntTest:
       script: 'coffee index.coffee'
 
+    migrations:
+      path: "#{__dirname}/migrations"
+      template: grunt.file.read "#{__dirname}/migrations/_template.coffee" # optional
+      mongo: 'mongodb://localhost:27017'
+      ext: "coffee" # default `coffee`
+
+  grunt.loadNpmTasks 'grunt-mongo-migrations'
+
   grunt.registerTask(
     'logTest',
     'console log content',
@@ -17,5 +25,5 @@ module.exports = (grunt) ->
   grunt.registerTask(
     'scriptTest',
     () ->
-       grunt.task.run['gruntTest']
+      require('./logTest')()
   )
