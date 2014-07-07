@@ -1,0 +1,19 @@
+{
+  "name": "protoTest",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "~1.2.4",
+    "mongoose": "~3.8.11",
+    "superagent": "~0.18.0",
+    "moment": "~2.6.0",
+    "csv": "0.4.0",
+    "log4js": "~0.6.14"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
