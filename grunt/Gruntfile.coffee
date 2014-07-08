@@ -10,7 +10,7 @@ module.exports = (grunt) ->
     migrations:
       path: "#{__dirname}/migrations"
       template: grunt.file.read "#{__dirname}/migrations/_template.coffee" # optional
-      mongo: 'mongodb://localhost:27017'
+      mongo: 'mongodb://localhost:27017/mongooseTest'
       ext: "coffee" # default `coffee`
 
   grunt.loadNpmTasks 'grunt-mongo-migrations'

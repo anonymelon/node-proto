@@ -13,12 +13,12 @@
 
 # console.log moment().format('YYYY-MM-DD HH:mm:ss')
 
-crypto = require 'crypto'
+# crypto = require 'crypto'
 
-createRandomHexString = (size = 24) ->
-  crypto.randomBytes(size / 2).toString('hex')
+# createRandomHexString = (size = 24) ->
+#   crypto.randomBytes(size / 2).toString('hex')
 
-console.log createRandomHexString(26)[0...25]
+# console.log createRandomHexString(26)[0...25]
 
 # dic =
 #   versions: [{android:'1.7.3',ios: '7.02'}, {ios: '7.02'}]
@@ -54,3 +54,7 @@ console.log createRandomHexString(26)[0...25]
 
 # console.log  al.join ','
 
+testStr = 'localhost/tuisongbao_new_test'
+
+
+console.log testStr.replace(/\//g, ':27017/')

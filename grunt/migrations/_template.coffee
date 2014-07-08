@@ -4,6 +4,9 @@ module.exports =
   up: (callback) ->
     callback()
 
+  down: (done) ->
+    done()
+
   test: ->
     describe 'up', ->
       before ->
