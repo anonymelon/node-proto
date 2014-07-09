@@ -13,4 +13,8 @@ userSchema.statics.findByName = function(name, cb) {
 }
 
 
-module.exports = mongoose.model('user', userSchema)
+module.exports =
+  User: ->
+    mongoose.model('user', userSchema)
+  UserSchema:
+    userSchema
