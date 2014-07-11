@@ -1,8 +1,9 @@
 {
-    "name": "mongoose_test",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {
-        "mongoose": "*"
-    }
+  "name": "mongoose_test",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "mongoose": "*",
+    "mongodb": "~1.4.7"
+  }
 }
