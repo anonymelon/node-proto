@@ -27,3 +27,9 @@ module.exports = (grunt) ->
     () ->
       require('./logTest')()
   )
+
+  grunt.registerTask(
+    'connect',
+    () ->
+      require('./connect')()
+  )
