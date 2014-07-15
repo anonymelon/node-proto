@@ -6,7 +6,7 @@ Promise = require 'bluebird'
 Promise.promisifyAll mongoose.Model
 Promise.promisifyAll mongoose.Model.prototype
 Promise.promisifyAll mongoose.Query.prototype
-Promise.promisifyAll mongoose.Collection.prototype
+Promise.promisifyAll mongoose.mongo.Collection.prototype
 
 ProductSchema = new mongoose.Schema(
   name: String

@@ -24,10 +24,8 @@ settings = require './settings'
 
 mongoose.connect settings.host, settings.database
 
-Product.collection.rename 'products'
-.then (collection) ->
-  console.log "after rename, collection name is #{ collection.collectionName }"
-.catch (err) ->
-  console.error err
+Product.collection.rename 'products', (err, ret) ->
+  return console.error err if err
+  console.log "after rename, collection name is #{ ret.collectionName }"
 
 
