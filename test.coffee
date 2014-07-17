@@ -54,7 +54,28 @@
 
 # console.log  al.join ','
 
-testStr = 'localhost/tuisongbao_new_test'
+# testStr = 'localhost/tuisongbao_new_test'
 
 
-console.log testStr.replace(/\//g, ':27017/')
+# console.log testStr.replace(/\//g, ':27017/')
+
+
+a = ['a', 'b', 'c', 'd']
+
+
+sw = (a) ->
+  ob = {}
+  switch a
+    when 'a'
+      ob.a = 'a'
+    when 'b'
+      ob.b = 'b'
+    when 'c'
+      ob.c = 'c'
+    when 'd'
+      ob.d = 'd'
+
+  ob
+
+for i in a
+  console.log sw(i)
