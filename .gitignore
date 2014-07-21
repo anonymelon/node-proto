@@ -2,3 +2,5 @@
 node_modules/
 
 spiders/tmp/*
+
+test.*
