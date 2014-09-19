@@ -1,0 +1,15 @@
+{
+  "name": "statsd-test",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "statsd": "~0.7.2",
+    "statsd-client": "0.0.16"
+  }
+}
