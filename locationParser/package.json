@@ -1,5 +1,5 @@
 {
-  "name": "statsd-test",
+  "name": "locationParser",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -9,8 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "statsd": "~0.7.2",
-    "statsd-client": "0.0.16",
-    "node-statsd": "0.0.7"
+    "async": "~0.9.0"
   }
 }
