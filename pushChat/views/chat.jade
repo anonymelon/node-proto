@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  h1 Push Chat Demo
+
+  input(type="text" id="inputText")
+
+  input(type="button" onclick="sendMessage()" value="Send")
+
+  div(id="messageList")
+
+  script(type='text/javascript').
+    var tsbPusher = new TSBPusher('TestAppKey');
+    var chatSocket = io.connect('http://localhost:3100');
+
+    chatSocket.emit('getChannel');
+
+    chatSocket.on('assignChannel', function(channel) {
+      console.log('get assign channel: ' + channel);
+      tsbPusher.subscribe(channel);
+    });
+
+    tsbPusher.on('newMessage', function(data) {
+      console.log('get new message', data);
+      renderMessage(data.id, data.message);
+    });
+
+    function sendMessage() {
+      var inputvalue = $('#inputText').val();
+
+      tsbPusher.publish({
+        channel: 'pushChatChannel_1',
+        message: inputvalue
+      });
+      renderMessage('self', inputvalue);
+    }
+
+    function renderMessage(sender, message) {
+      var $senderP= $("<p>"+sender+"</p>");
+      var $messageP= $("<p>"+message+"</p>");
+      var $blankP= $("<p>--------------------</p>");
+      $('#messageList').append($senderP);
+      $('#messageList').append($messageP);
+      $('#messageList').append($blankP);
+    }
+
