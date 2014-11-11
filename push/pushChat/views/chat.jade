@@ -1,0 +1,75 @@
+extends layout
+
+block content
+  h1 Push Chat Demo
+
+  input(type="text" id="publicInput")
+
+  input(type="button" onclick="sendPublicMessage()" value="sendPublicMessage")
+
+  p Public Messages
+    div(id="publicMessages")
+
+  input(type="text" id="privateInput")
+
+  input(type="button" onclick="sendPrivateMessage()" value="sendPrivateMessage")
+
+  p Private Messages
+    div(id="privateMessages")
+
+  script(type='text/javascript').
+    var tsbPusher = new TSBPusher('TestAppKey');
+    //- var chatSocket = io.connect('http://localhost:3100');
+
+    //- chatSocket.emit('getChannel');
+
+    //- var publicChannel;
+    //- chatSocket.on('assignChannel', function(channel) {
+    //-   console.log('get assign channel: ' + channel);
+    //-   publicChannel = tsbPusher.subscribe(channel); //Acturally here is async, forget it
+    //- });
+
+    //- subscribe self channel
+
+    var randomId = Math.random() * 10000;
+    var publicChannel = tsbPusher.subscribe('publicChannel');
+    var privateChannel = tsbPusher.subscribe('privateChannel');
+
+    publicChannel.bind('publicMessage', function(data){
+      console.log('get publicChannel message', data);
+      renderMessage(data.id, data.message, 'publicMessages');
+    });
+
+    privateChannel.bind('privateMessage', function(data){
+      console.log('get privateChannel message', data);
+      renderMessage(data.id, data.message, 'privateMessages');
+    });
+
+    function sendPublicMessage() {
+      var inputvalue = $('#publicInput').val();
+
+      publicChannel.trigger('publicMessage',{
+        id: randomId,
+        message: inputvalue
+      });
+      renderMessage('self', inputvalue, 'publicMessages');
+    }
+
+    function sendPrivateMessage() {
+      var inputvalue = $('#privateInput').val();
+
+      privateChannel.trigger('privateMessage',{
+        id: randomId,
+        message: inputvalue
+      });
+      renderMessage('self', inputvalue, 'privateMessages');
+    }
+
+    function renderMessage(sender, message, messageDivID) {
+      var $senderP= $("<p>"+sender+"</p>");
+      var $messageP= $("<p>"+message+"</p>");
+      var $blankP= $("<p>--------------------</p>");
+      $('#'+messageDivID).append($senderP);
+      $('#'+messageDivID).append($messageP);
+      $('#'+messageDivID).append($blankP);
+    }
