@@ -4,7 +4,16 @@ var sio = require('socket.io');
 
 module.exports = function(server) {
   var io = sio(server);
+
   io.on('connection', function(socket) {
+
+    socket.on('assignNamespace', function(namespace) {
+      // Verify namespace
+      console.log('11111111111111111');
+      var nsp = io.of(namespace);
+      // nsp.prototype = io.prototype;
+    });
+
     socket.on('joinChannel', function(channel) {
       console.log('Socket: ' + socket.id + ' join ' + channel);
       socket.join(channel);
@@ -31,6 +40,7 @@ module.exports = function(server) {
       socket.on(data.event, function(data) {
         console.log('get data from self bind: ' + data);
         socket.broadcast.to(data.channel).emit(data.event, data);
+        socket.broadcast.emit(data.event, data);
       });
     });
   });
