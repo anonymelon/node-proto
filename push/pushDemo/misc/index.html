@@ -1,0 +1,23 @@
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  // var socket = io.connect('http://localhost:8000/', {
+  //   // transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'],
+  //   // transports: ['polling', 'websocket'],
+  //   'force new connection': true
+  // });
+
+  var socket = io.connect('http://localhost:8000/',{
+    // Spicify transports here to avoid protocol switch, first websocket, second polling
+    // Polling is not stable
+    transports: ['websocket', 'polling']
+    // 'force new connection': true
+  });
+  socket.on('news', function(data) {
+    console.log(data);
+  });
+  setInterval(function(){
+    socket.emit('my other event', {
+      my: 'data'
+    });
+  }, 1000)
+</script>

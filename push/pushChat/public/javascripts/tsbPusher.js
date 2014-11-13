@@ -2,7 +2,7 @@
 
 ;
 (function() {
-  var TSB_PUSH_HOST = 'http://localhost:3000';
+  var TSB_PUSH_HOST = 'http://localhost:3000/';
   /** Channel object
    *
    * @param {String} appKey
@@ -10,7 +10,12 @@
   // TODO add appKey verification
   function TSBPusher(appKey) {
     this.key = appKey;
-    this.socket = io.connect(TSB_PUSH_HOST);
+    this.socket = io.connect(TSB_PUSH_HOST + appKey, {
+      // Spicify transports here to avoid protocol switch, first websocket, second polling
+      // Polling is not stable
+      transports: ['websocket', 'polling'],
+      'force new connection': true // Force create new connection
+    });
     this.channels = {};
     this.channel = new TSBPusher.Channel('/', this);
   }
@@ -33,8 +38,7 @@
 
   TSBPusher.prototype.bind = function(event, fn) {
     var pusherEvent = this.channel.name + ':' + event;
-    this.socket.on(pusherEvent, fn);
-    this.socket.emit('bindEvent', pusherEvent);
+    this._bind(pusherEvent, fn);
   }
 
   TSBPusher.prototype._bind = function(event, fn) {

@@ -1,10 +1,17 @@
 'use strict'
 
 var sio = require('socket.io');
+var redis = require('socket.io-redis');
 
 module.exports = function(server) {
-  var io = sio(server).of('TestApp');
-  io.on('connection', function(socket) {
+  var io = sio(server);
+  io.adapter(redis({
+    host: 'localhost',
+    port: 6379
+  }));
+  var nsp = io.of('/testApp'); // TODO Refine hard code namespace
+  nsp.on('connection', function(socket) {
+    console.log('socket call handled by worker with pid ' + process.pid);
     var channels = [];
     var bindEvents = [];
 
@@ -35,7 +42,6 @@ module.exports = function(server) {
       if (bindEvents.indexOf(event) == -1) {
         bindEvents.push(event);
         socket.on(event, function(data) {
-          console.log('broadcast to channel ' + data.channel + ' with data: ' + data);
           socket.broadcast.to(data.channel).emit(event, data);
           io.sockets.emit('/:' + event.split(':')[1], data);
         });
