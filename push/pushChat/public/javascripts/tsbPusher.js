@@ -2,7 +2,7 @@
 
 ;
 (function() {
-  var TSB_PUSH_HOST = 'http://localhost:3000/';
+  var TSB_PUSH_HOST = 'http://localhost:5000/';
   /** Channel object
    *
    * @param {String} appKey
@@ -10,21 +10,33 @@
   // TODO add appKey verification
   function TSBPusher(appKey) {
     this.key = appKey;
-    this.socket = io.connect(TSB_PUSH_HOST + appKey, {
-      // Spicify transports here to avoid protocol switch, first websocket, second polling
-      // Polling is not stable
-      transports: ['websocket', 'polling'],
-      'force new connection': true // Force create new connection
-    });
+    _getAssignHost.apply(this)
     this.channels = {};
     this.channel = new TSBPusher.Channel('/', this);
+
+    function _getAssignHost() {
+      console.log(this, '==========');
+      var connectSocket = io.connect(TSB_PUSH_HOST + appKey, {
+        'force new connection': true // Force create new connection
+      });
+
+      connectSocket.emit('assignHost');
+
+      connectSocket.on('assignHost', function(port) {
+        console.log(port, '-----------');
+        this.connectHost = port;
+        this.pushSocket = io.connect('http://localhost:' + port, {
+          'force new connection': true
+        });
+      });
+    }
   }
 
   TSBPusher.prototype.subscribe = function(channel) {
     if (!this.channels[channel]) {
       this.channels[channel] = new TSBPusher.Channel(channel, this);
     }
-    this.socket.emit('joinChannel', channel);
+    this.pushSocket.emit('joinChannel', channel);
     return this.channels[channel];
   }
 
@@ -32,7 +44,7 @@
     if (!this.channels[channel]) {
       console.log(channel + ' not subscribed');
     } else {
-      this.socket.emit('leaveChannel', channel);
+      this.pushSocket.emit('leaveChannel', channel);
     }
   }
 
@@ -42,17 +54,17 @@
   }
 
   TSBPusher.prototype._bind = function(event, fn) {
-    this.socket.on(event, fn);
-    this.socket.emit('bindEvent', event);
+    this.pushSocket.on(event, fn);
+    this.pushSocket.emit('bindEvent', event);
   }
 
   TSBPusher.prototype._unbind = function(event) {
-    this.socket.removeAllListeners(event);
-    this.socket.emit('unbindEvent', event);
+    this.pushSocket.removeAllListeners(event);
+    this.pushSocket.emit('unbindEvent', event);
   }
 
   TSBPusher.prototype._trigger = function(event, data) {
-    this.socket.emit(event, data);
+    this.pushSocket.emit(event, data);
   }
 
   this.TSBPusher = TSBPusher;
@@ -83,8 +95,8 @@
     this.pusher._unbind(getChannelEvent(this.name, event));
   }
 
-  function getChannelEvent(name, event) {
-    return name + ':' + event;
+  function getChannelEvent(appkey, name, event) {
+    return appkey + ':' + name + ':' + event;
   }
 
   TSBPusher.Channel = Channel;

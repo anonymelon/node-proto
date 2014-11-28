@@ -3,8 +3,10 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    script(src="/socket.io/socket.io.js")
     script(src='/javascripts/jquery.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/socketcluster.js')
+    script(src='http://dev.tuisongbao.com/realtimeEngine/realtimeEngine.js')
     script(src='/javascripts/tsbPusher.js')
   body
     block content
