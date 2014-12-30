@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+
+  script(type='text/javascript').
+      //- var socket = new eio.Socket('ws://localhost:5000/');
+      //- socket.on('open', function(){
+      //-   socket.on('message', function(data){
+      //-     console.log(data)
+      //-     });
+      //-   socket.on('close', function(){});
+      //- });
+
+      //- setInterval(function(){
+      //-   socket.send('hello')
+      //- }, 10000);
