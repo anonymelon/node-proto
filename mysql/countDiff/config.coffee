@@ -18,3 +18,4 @@ module.exports =
   totalNum: 1000000
   bunketNum: 50000
   deleteIdNum: 10000
+  extraAddNum: 10000

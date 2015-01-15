@@ -1,22 +1,22 @@
 'use strict'
 
-mysql = require 'mysql'
-Promise = require 'bluebird'
 EventEmitter = require('events').EventEmitter
 
-eventHandler = new EventEmitter()
+mysql = require 'mysql'
+Promise = require 'bluebird'
+
 config = require './config'
 utils = require './utils'
+eventHandler = new EventEmitter()
 
 getPool = (config) ->
   mysql.createPool config
 
 createDBSQL = "create database if not exists #{ config.dbName };"
+
 conn = mysql.createConnection config.connConfig
-
 Promise.promisifyAll conn
-
-conn.connect();
+conn.connect()
 
 conn.queryAsync createDBSQL
 .spread (rows, fields) ->
@@ -39,15 +39,13 @@ conn.queryAsync createDBSQL
       config.bunketNum = config.totalNum
     poolNums = config.totalNum / config.bunketNum
     successCount = failedCount = 0
-
     poolStores = []
-    startTime = (new Date).getTime()
-
     deleteIds = []
+    startTime = new Date().getTime()
 
     eventHandler.on 'insertDone', (success, failed) ->
       console.log "Insert done, success: #{ success }, failed: #{ failed }"
-      endTime = (new Date).getTime()
+      endTime = new Date().getTime()
       console.log "Total time: #{ (endTime - startTime) }ms"
       for pool in poolStores
         pool.end()
@@ -55,15 +53,29 @@ conn.queryAsync createDBSQL
     eventHandler.on 'insertError', (table, count) ->
       console.log "Got error when insert into #{ table }, error count: #{ count }"
 
+    # Do some extra steps
     eventHandler.on 'insertDone', ->
       console.log "Start delete origin table record"
       pool = getPool config.connConfig
       pool.getConnection (err, conn) ->
-        conn.query (utils.getDeleteQuery 'origin', deleteIds), (err, rows, fields) ->
-          return throw err if err
-          console.log "Delete done"
-
-
+        Promise.all [
+          # Delete records from origin
+          conn.query (utils.getDeleteQuery 'origin', deleteIds), (err, rows, fields) ->
+            return throw err if err
+            console.log "Delete done"
+        ,
+          # Add extra records to compare
+          console.log "Add extra data to compare"
+          insertValuesArray = []
+          for i in [0...config.extraAddNum]
+            randomID = utils.getRandomNumString()
+            insertValuesArray.push [randomID, 'tester']
+          conn.query utils.getInsertQuery('compare', insertValuesArray), (err, rows, fields) ->
+            return throw err if err
+            console.log "Extra added done"
+        ]
+        .then ->
+          pool.end()
 
     # TODO: poolNums > 100 may got too many connection error, try limit parallel
     for i in [0...poolNums]
@@ -86,11 +98,11 @@ conn.queryAsync createDBSQL
               eventHandler.emit 'insertError', table, failedCount
               return throw err
             successCount += rows.affectedRows
-            console.log "Current insert number: #{ successCount }"
+            console.log "Current total insert number: #{ successCount }"
             if successCount + failedCount >= config.totalNum * tables.length
               eventHandler.emit 'insertDone', successCount, failedCount
-# .catch (err) ->
-#   return console.error err if err
+.catch (err) ->
+  return console.error err if err
 .finally ->
   conn.end()
 
