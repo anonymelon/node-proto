@@ -13,7 +13,18 @@ module.exports = (grunt) ->
       mongo: 'mongodb://localhost:27017/mongooseTest'
       ext: "coffee" # default `coffee`
 
+    compress:
+      main:
+        options:
+          archive: 'dist/archive.zip'
+        files: [
+          expand: true
+          src: ['logTest.coffee', 'package.json']
+        ]
+
   grunt.loadNpmTasks 'grunt-mongo-migrations'
+
+  grunt.loadNpmTasks 'grunt-contrib-compress'
 
   grunt.registerTask(
     'logTest',
